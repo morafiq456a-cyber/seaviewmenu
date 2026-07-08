@@ -108,6 +108,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "القائمة الرقمية | Digital Menu" },
       { name: "twitter:description", content: "قائمة طعام رقمية فاخرة — تصفّح أطباقنا وعروضنا بتجربة أنيقة وسريعة. A premium digital restaurant menu." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8260fa98-222b-4a91-a6c6-9cbc525e31e6/id-preview-cb672ea4--32191405-3b3a-4a02-bb28-6e0950d38da2.lovable.app-1783541946356.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8260fa98-222b-4a91-a6c6-9cbc525e31e6/id-preview-cb672ea4--32191405-3b3a-4a02-bb28-6e0950d38da2.lovable.app-1783541946356.png" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
