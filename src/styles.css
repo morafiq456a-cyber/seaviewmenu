@@ -1,0 +1,416 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * ============================================================
+ * PREMIUM RESTAURANT MENU — DESIGN SYSTEM
+ * ------------------------------------------------------------
+ * Semantic tokens only. Colors are overridable at runtime by
+ * the Theme Editor (see src/lib/theme-config.ts) which injects
+ * a #theme-vars <style> tag that overrides :root / .dark below.
+ * ============================================================
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 14px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-header: var(--header);
+  --color-footer: var(--footer);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+
+  --shadow-soft: var(--shadow-soft-val);
+  --shadow-elevated: var(--shadow-elevated-val);
+}
+
+:root {
+  --radius: 1rem;
+
+  /* Warm luxurious light palette (default) */
+  --background: #fbf7f0;
+  --foreground: #23180f;
+  --surface: #f6efe3;
+  --header: #fffdf8;
+  --footer: #23180f;
+  --card: #ffffff;
+  --card-foreground: #23180f;
+  --popover: #ffffff;
+  --popover-foreground: #23180f;
+  --primary: #b8863b;
+  --primary-foreground: #fff9ee;
+  --secondary: #f0e7d6;
+  --secondary-foreground: #4a3a25;
+  --muted: #f2ece1;
+  --muted-foreground: #7a6a55;
+  --accent: #c0472b;
+  --accent-foreground: #fff5f2;
+  --destructive: #c0392b;
+  --destructive-foreground: #fff5f2;
+  --success: #2f8f5b;
+  --success-foreground: #f2fff7;
+  --border: #e7dcc9;
+  --input: #e7dcc9;
+  --ring: #b8863b;
+
+  --font-heading: "Plus Jakarta Sans Variable", "Cairo", system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans Variable", "Cairo", system-ui, sans-serif;
+
+  --shadow-soft-val: 0 4px 20px -8px color-mix(in oklab, var(--foreground) 18%, transparent);
+  --shadow-elevated-val: 0 24px 60px -24px color-mix(in oklab, var(--foreground) 30%, transparent);
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #23180f;
+  --sidebar-primary: #b8863b;
+  --sidebar-primary-foreground: #fff9ee;
+  --sidebar-accent: #f2ece1;
+  --sidebar-accent-foreground: #4a3a25;
+  --sidebar-border: #e7dcc9;
+  --sidebar-ring: #b8863b;
+}
+
+.dark {
+  --background: #14100c;
+  --foreground: #f5eee2;
+  --surface: #1a140d;
+  --header: #181209;
+  --footer: #0f0b07;
+  --card: #1e1811;
+  --card-foreground: #f5eee2;
+  --popover: #1e1811;
+  --popover-foreground: #f5eee2;
+  --primary: #d2a24c;
+  --primary-foreground: #1a1409;
+  --secondary: #2a2119;
+  --secondary-foreground: #f0e7d6;
+  --muted: #241d15;
+  --muted-foreground: #b3a58e;
+  --accent: #e0603f;
+  --accent-foreground: #1a0d09;
+  --destructive: #e05545;
+  --destructive-foreground: #1a0605;
+  --success: #4bbd83;
+  --success-foreground: #06140c;
+  --border: #33291d;
+  --input: #3a2f21;
+  --ring: #d2a24c;
+
+  --shadow-soft-val: 0 4px 22px -8px rgba(0, 0, 0, 0.6);
+  --shadow-elevated-val: 0 28px 70px -24px rgba(0, 0, 0, 0.75);
+
+  --sidebar: #1a140d;
+  --sidebar-foreground: #f5eee2;
+  --sidebar-primary: #d2a24c;
+  --sidebar-primary-foreground: #1a1409;
+  --sidebar-accent: #241d15;
+  --sidebar-accent-foreground: #f0e7d6;
+  --sidebar-border: #33291d;
+  --sidebar-ring: #d2a24c;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Arabic typography */
+  :root[lang="ar"] {
+    --font-heading: "Cairo", "Plus Jakarta Sans Variable", system-ui, sans-serif;
+    --font-body: "Tajawal", "Cairo", system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 30%, transparent);
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
+    border-radius: 999px;
+  }
+}
+
+/* ============================================================
+ * UTILITIES
+ * ============================================================ */
+
+@utility gradient-primary {
+  background-image: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in oklab, var(--primary) 70%, var(--accent))
+  );
+}
+
+@utility text-gradient-primary {
+  background-image: linear-gradient(
+    120deg,
+    var(--primary),
+    color-mix(in oklab, var(--primary) 55%, var(--accent))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--background) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft-val);
+}
+
+@utility shadow-elevated {
+  box-shadow: var(--shadow-elevated-val);
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+}
+
+@utility press {
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.2s ease;
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* ============================================================
+ * KEYFRAMES
+ * ============================================================ */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.4s ease both;
+}
+
+@utility skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--muted) 100%, transparent) 25%,
+    color-mix(in oklab, var(--muted-foreground) 18%, var(--muted)) 37%,
+    color-mix(in oklab, var(--muted) 100%, transparent) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ============================================================
+ * THEME-DRIVEN MENU PRIMITIVES (Visual Theme Builder)
+ * ============================================================ */
+
+/* Menu card — style + shadow follow the theme config */
+@utility menu-card {
+  background: var(--card);
+  border: 1px solid transparent;
+  box-shadow: var(--card-shadow, none);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    border-color 0.2s ease;
+}
+
+:root[data-card="flat"] .menu-card {
+  box-shadow: none;
+  background: var(--surface);
+}
+:root[data-card="bordered"] .menu-card {
+  box-shadow: none;
+  border-color: var(--border);
+}
+:root[data-card="glass"] .menu-card {
+  background: color-mix(in oklab, var(--card) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-color: color-mix(in oklab, var(--border) 60%, transparent);
+}
+
+/* Menu button — shape / fill / shadow follow the theme config */
+@utility menu-btn {
+  border-radius: var(--btn-radius, var(--radius));
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 1.5px solid var(--primary);
+  transition:
+    transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+  &:active {
+    transform: scale(0.94);
+  }
+}
+:root[data-btn-shadow="1"] .menu-btn {
+  box-shadow: 0 8px 20px -8px color-mix(in oklab, var(--primary) 60%, transparent);
+}
+:root[data-btn-fill="outline"] .menu-btn {
+  background: transparent;
+  color: var(--primary);
+}
+:root[data-btn-fill="soft"] .menu-btn {
+  background: color-mix(in oklab, var(--primary) 16%, transparent);
+  color: var(--primary);
+  border-color: transparent;
+}
+
+/* Category chips — style follows the theme config */
+@utility menu-chip {
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  transition: all 0.2s ease;
+}
+:root[data-cat="rounded"] .menu-chip {
+  border-radius: var(--radius);
+}
+:root[data-cat="cards"] .menu-chip {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft-val);
+}
+:root[data-cat="underline"] .menu-chip {
+  border-radius: 0;
+  border-color: transparent;
+  border-bottom-width: 2px;
+  background: transparent;
+}
+.menu-chip[data-active="true"] {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--shadow-soft-val);
+}
+:root[data-cat="underline"] .menu-chip[data-active="true"] {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: none;
+}
+
+/* Motion levels */
+:root[data-anim="none"] * {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+:root[data-anim="minimal"] * {
+  animation-duration: 0.15s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
