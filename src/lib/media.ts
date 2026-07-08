@@ -14,6 +14,12 @@ export function mediaUrl(pathOrUrl: string | null | undefined): string {
   if (pathOrUrl.startsWith("http") || pathOrUrl.startsWith("data:") || pathOrUrl.startsWith("/")) {
     return pathOrUrl;
   }
+  // Bundled demo images ship in /public/seed/* — serve them as static assets
+  // directly, bypassing the media proxy so preview/remixed hosts work without
+  // any server function or storage lookup.
+  if (pathOrUrl.startsWith("seed/")) {
+    return `/${pathOrUrl}`;
+  }
   return `/api/public/media/${pathOrUrl}`;
 }
 
