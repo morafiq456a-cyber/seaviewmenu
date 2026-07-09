@@ -307,14 +307,6 @@ function MenuPage() {
         product={selected}
         currency={currency}
         settings={settings}
-        related={
-          selected
-            ? products
-                .filter((p) => p.id !== selected.id && p.category_id === selected.category_id)
-                .slice(0, 6)
-            : []
-        }
-        onSelectProduct={(p) => setSelected(p)}
         onOpenChange={(o) => !o && setSelected(null)}
       />
     </div>
