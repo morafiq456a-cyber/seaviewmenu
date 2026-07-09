@@ -7,9 +7,10 @@ import {
   Phone,
   MessageCircle,
   Leaf,
-  Link2,
   ZoomIn,
   AlertTriangle,
+  X,
+  Info,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -81,69 +82,128 @@ export function ProductModal({
     }
   };
 
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(productUrl());
-    toast.success(t("linkCopied"));
-  };
-
-  const hasNutrition = product.calories || product.prep_time;
+  const ingredientChips = ingredients
+    ? ingredients
+        .split(/[,،\n]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
 
   return (
     <Dialog open={!!product} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] gap-0 overflow-hidden overflow-y-auto rounded-3xl border-border p-0 sm:max-w-lg no-scrollbar">
-        {/* Gallery */}
-        <div
-          className={cn(
-            "relative aspect-[4/3] w-full overflow-hidden bg-muted",
-            hero && "cursor-zoom-in",
-          )}
-          onClick={() => hero && setZoom(true)}
-        >
-          {hero ? (
-            <img src={hero} alt={name} className="size-full object-cover" />
-          ) : (
-            <div className="size-full gradient-primary" />
-          )}
-          {hero ? (
-            <span className="absolute bottom-3 start-3 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-semibold text-foreground backdrop-blur">
-              <ZoomIn className="size-3.5" /> {isRTL ? "تكبير" : "Zoom"}
-            </span>
-          ) : null}
+      <DialogContent
+        className="flex! max-h-[92vh] w-[calc(100%-1.5rem)] max-w-lg flex-col gap-0 overflow-hidden overflow-y-auto rounded-3xl border-border bg-background p-0 no-scrollbar [&>button.absolute]:hidden"
+      >
+        {/* ===== SECTION 1 — Image ===== */}
+        <div className="relative w-full">
+          <div
+            className={cn(
+              "relative aspect-[16/9] w-full overflow-hidden rounded-t-3xl bg-muted",
+              hero && "cursor-zoom-in",
+            )}
+            onClick={() => hero && setZoom(true)}
+          >
+            {hero ? (
+              <img src={hero} alt={name} className="size-full object-cover" />
+            ) : (
+              <div className="size-full gradient-primary" />
+            )}
 
-          {product.discount ? (
-            <DiscountBadge value={product.discount} className="absolute end-3 top-3" />
-          ) : null}
-          {!product.is_available ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-              <span className="rounded-full bg-foreground/85 px-4 py-1.5 text-sm font-bold text-background">
-                {t("outOfStock")}
+            {/* readability gradient */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
+
+            {hero ? (
+              <span className="pointer-events-none absolute bottom-3 end-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                <ZoomIn className="size-3.5" />
+                {isRTL ? "تكبير" : "Zoom"}
               </span>
+            ) : null}
+
+            {!product.is_available ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/60">
+                <span className="rounded-full bg-foreground/85 px-4 py-1.5 text-sm font-bold text-background">
+                  {t("outOfStock")}
+                </span>
+              </div>
+            ) : null}
+
+            {/* Gallery indicators */}
+            {images.length > 1 ? (
+              <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
+                {images.map((src, i) => (
+                  <button
+                    key={src}
+                    aria-label={`Image ${i + 1}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActive(i);
+                    }}
+                    className={cn(
+                      "h-1.5 rounded-full transition-all",
+                      i === active ? "w-6 bg-white" : "w-1.5 bg-white/50",
+                    )}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          {/* Top-left: Close */}
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => onOpenChange(false)}
+            style={{ left: "0.75rem", top: "0.75rem" }}
+            className="absolute z-10 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-black/70 active:scale-95"
+          >
+            <X className="size-5" />
+          </button>
+
+          {/* Top-right: Share */}
+          <button
+            type="button"
+            aria-label={t("share")}
+            onClick={share}
+            style={{ right: "0.75rem", top: "0.75rem" }}
+            className="absolute z-10 grid size-11 place-items-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-black/70 active:scale-95"
+          >
+            <Share2 className="size-5" />
+          </button>
+
+          {/* Thumbnail strip (kept for multi-image navigation) */}
+          {images.length > 1 ? (
+            <div className="flex gap-2 overflow-x-auto px-5 pt-4 no-scrollbar">
+              {images.map((src, i) => (
+                <button
+                  key={`thumb-${src}`}
+                  onClick={() => setActive(i)}
+                  className={cn(
+                    "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition",
+                    i === active ? "border-primary" : "border-transparent opacity-70",
+                  )}
+                >
+                  <img src={src} alt="" className="size-full object-cover" />
+                </button>
+              ))}
             </div>
           ) : null}
         </div>
 
-        {images.length > 1 ? (
-          <div className="flex gap-2 overflow-x-auto px-4 pt-4 no-scrollbar">
-            {images.map((src, i) => (
-              <button
-                key={src}
-                onClick={() => setActive(i)}
-                className={cn(
-                  "size-14 shrink-0 overflow-hidden rounded-xl border-2 transition",
-                  i === active ? "border-primary" : "border-transparent opacity-70",
-                )}
-              >
-                <img src={src} alt="" className="size-full object-cover" />
-              </button>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="space-y-4 p-5">
-          <div className="space-y-1.5">
-            <DialogTitle className="font-heading text-2xl font-extrabold leading-tight">
+        {/* ===== SECTION 2 — Content card ===== */}
+        <div className="relative -mt-5 rounded-t-3xl bg-card shadow-elevated">
+          <div className="space-y-5 p-6">
+            {/* Name */}
+            <DialogTitle className="font-heading text-2xl font-extrabold leading-tight text-card-foreground">
               {name}
             </DialogTitle>
+
+            {/* Price + discount */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Price product={product} currency={currency} size="lg" />
+              {product.discount ? <DiscountBadge value={product.discount} /> : null}
+            </div>
+
+            {/* Description */}
             {desc ? (
               <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
                 {desc}
@@ -151,145 +211,166 @@ export function ProductModal({
             ) : (
               <DialogDescription className="sr-only">{name}</DialogDescription>
             )}
-          </div>
 
-          <div className="flex items-center justify-between">
-            <Price product={product} currency={currency} size="lg" />
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={copyLink}
-                className="gap-1.5 text-muted-foreground"
-              >
-                <Link2 className="size-4" /> {t("copyLink")}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={share}
-                className="gap-1.5 text-muted-foreground"
-              >
-                <Share2 className="size-4" /> {t("share")}
-              </Button>
-            </div>
-          </div>
+            {/* Meta chips (spicy / vegetarian) */}
+            {(product.is_spicy || product.is_vegetarian) && (
+              <div className="flex flex-wrap gap-2">
+                {product.is_spicy ? <Meta icon={Flame} label={t("spicy")} /> : null}
+                {product.is_vegetarian ? <Meta icon={Leaf} label={t("vegetarian")} /> : null}
+              </div>
+            )}
 
-          {/* Meta chips */}
-          <div className="flex flex-wrap gap-2">
-            {product.calories ? (
-              <Meta icon={Sparkles} label={`${product.calories} ${t("cal")}`} />
-            ) : null}
-            {product.prep_time ? (
-              <Meta icon={Clock} label={`${product.prep_time} ${t("min")}`} />
-            ) : null}
-            {product.is_spicy ? <Meta icon={Flame} label={t("spicy")} /> : null}
-            {product.is_vegetarian ? <Meta icon={Leaf} label={t("vegetarian")} /> : null}
-          </div>
-
-          {/* Tags */}
-          {tags.length ? (
-            <div className="flex flex-wrap gap-1.5">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          ) : null}
-
-          {ingredients ? <InfoBlock title={t("ingredients")}>{ingredients}</InfoBlock> : null}
-
-          {allergens ? (
-            <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4">
-              <h4 className="mb-1.5 flex items-center gap-1.5 font-heading text-sm font-bold text-accent">
-                <AlertTriangle className="size-4" /> {t("allergens")}
-              </h4>
-              <p className="text-sm leading-relaxed text-muted-foreground">{allergens}</p>
-            </div>
-          ) : null}
-
-          {/* Nutrition */}
-          {hasNutrition ? (
-            <div className="rounded-2xl bg-muted/60 p-4">
-              <h4 className="mb-2.5 font-heading text-sm font-bold">{t("nutrition")}</h4>
+            {/* Prep time + Calories — two premium cards */}
+            {(product.prep_time || product.calories) && (
               <div className="grid grid-cols-2 gap-3">
-                {product.calories ? (
-                  <NutriStat label={t("calories")} value={`${product.calories} ${t("cal")}`} />
+                <StatCard
+                  icon={Clock}
+                  label={t("prepTime")}
+                  value={
+                    product.prep_time ? `${product.prep_time} ${t("min")}` : "—"
+                  }
+                  muted={!product.prep_time}
+                />
+                <StatCard
+                  icon={Sparkles}
+                  label={t("calories")}
+                  value={
+                    product.calories ? `${product.calories} ${t("cal")}` : "—"
+                  }
+                  muted={!product.calories}
+                />
+              </div>
+            )}
+
+            {/* Ingredients as chips */}
+            {ingredientChips.length ? (
+              <section className="space-y-2.5">
+                <h4 className="font-heading text-sm font-bold text-card-foreground">
+                  {t("ingredients")}
+                </h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {ingredientChips.map((chip, i) => (
+                    <span
+                      key={`${chip}-${i}`}
+                      className="rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground"
+                    >
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {/* Tags */}
+            {tags.length ? (
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            {/* Allergens — warning card */}
+            {allergens ? (
+              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4">
+                <h4 className="mb-1.5 flex items-center gap-1.5 font-heading text-sm font-bold text-accent">
+                  <AlertTriangle className="size-4" /> {t("allergens")}
+                </h4>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {allergens}
+                </p>
+              </div>
+            ) : null}
+
+            {/* Notes — info card */}
+            {notes ? (
+              <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4">
+                <h4 className="mb-1.5 flex items-center gap-1.5 font-heading text-sm font-bold text-primary">
+                  <Info className="size-4" /> {t("notes")}
+                </h4>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {notes}
+                </p>
+              </div>
+            ) : null}
+
+            {/* Actions */}
+            {(settings?.whatsapp || settings?.phone) && (
+              <div className="grid grid-cols-1 gap-2.5 pt-1 sm:grid-cols-2">
+                {settings?.whatsapp ? (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="h-12 gap-2 rounded-2xl bg-success text-success-foreground shadow-soft hover:bg-success/90"
+                  >
+                    <a
+                      href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}?text=${orderText}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <MessageCircle className="size-5" /> {t("whatsapp")}
+                    </a>
+                  </Button>
                 ) : null}
-                {product.prep_time ? (
-                  <NutriStat label={t("prepTime")} value={`${product.prep_time} ${t("min")}`} />
+                {settings?.phone ? (
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="secondary"
+                    className="h-12 gap-2 rounded-2xl"
+                  >
+                    <a href={`tel:${settings.phone}`}>
+                      <Phone className="size-5" /> {t("call")}
+                    </a>
+                  </Button>
                 ) : null}
               </div>
-            </div>
-          ) : null}
+            )}
 
-          {notes ? <InfoBlock title={t("notes")}>{notes}</InfoBlock> : null}
-
-          {/* Actions */}
-          <div className="grid grid-cols-2 gap-2.5 pt-1">
-            {settings?.whatsapp ? (
-              <Button
-                asChild
-                className="gap-2 rounded-xl bg-success text-success-foreground hover:bg-success/90"
-              >
-                <a
-                  href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, "")}?text=${orderText}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <MessageCircle className="size-4" /> {t("whatsapp")}
-                </a>
-              </Button>
-            ) : null}
-            {settings?.phone ? (
-              <Button asChild variant="secondary" className="gap-2 rounded-xl">
-                <a href={`tel:${settings.phone}`}>
-                  <Phone className="size-4" /> {t("call")}
-                </a>
-              </Button>
+            {/* Related products */}
+            {related.length ? (
+              <div className="space-y-2.5 border-t border-border pt-4">
+                <h4 className="font-heading text-sm font-bold">
+                  {t("relatedProducts")}
+                </h4>
+                <div className="flex gap-3 overflow-x-auto no-scrollbar">
+                  {related.map((r) => {
+                    const rImg = mediaUrl(orderedImages(r)[0]);
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => onSelectProduct?.(r)}
+                        className="w-28 shrink-0 text-start"
+                      >
+                        <div className="aspect-square overflow-hidden rounded-xl bg-muted">
+                          {rImg ? (
+                            <img
+                              src={rImg}
+                              alt={pick(r, "name")}
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            <div className="size-full gradient-primary" />
+                          )}
+                        </div>
+                        <div className="mt-1.5 truncate text-xs font-semibold text-foreground">
+                          {pick(r, "name")}
+                        </div>
+                        <div className="text-xs font-bold text-primary">
+                          {r.price} {r.currency}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             ) : null}
           </div>
-
-          {/* Related products */}
-          {related.length ? (
-            <div className="space-y-2.5 border-t border-border pt-4">
-              <h4 className="font-heading text-sm font-bold">{t("relatedProducts")}</h4>
-              <div className="flex gap-3 overflow-x-auto no-scrollbar">
-                {related.map((r) => {
-                  const rImg = mediaUrl(orderedImages(r)[0]);
-                  return (
-                    <button
-                      key={r.id}
-                      onClick={() => onSelectProduct?.(r)}
-                      className="w-28 shrink-0 text-start"
-                    >
-                      <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                        {rImg ? (
-                          <img
-                            src={rImg}
-                            alt={pick(r, "name")}
-                            className="size-full object-cover"
-                          />
-                        ) : (
-                          <div className="size-full gradient-primary" />
-                        )}
-                      </div>
-                      <div className="mt-1.5 truncate text-xs font-semibold text-foreground">
-                        {pick(r, "name")}
-                      </div>
-                      <div className="text-xs font-bold text-primary">
-                        {r.price} {r.currency}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
         </div>
       </DialogContent>
 
@@ -315,20 +396,35 @@ function Meta({ icon: Icon, label }: { icon: typeof Flame; label: string }) {
   );
 }
 
-function InfoBlock({ title, children }: { title: string; children: React.ReactNode }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  muted,
+}: {
+  icon: typeof Clock;
+  label: string;
+  value: string;
+  muted?: boolean;
+}) {
   return (
-    <div className="rounded-2xl bg-muted/60 p-4">
-      <h4 className="mb-1.5 font-heading text-sm font-bold">{title}</h4>
-      <p className="text-sm leading-relaxed text-muted-foreground">{children}</p>
-    </div>
-  );
-}
-
-function NutriStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-background/60 p-3 text-center">
-      <div className="font-heading text-lg font-black text-primary">{value}</div>
-      <div className="text-[11px] font-medium text-muted-foreground">{label}</div>
+    <div
+      className={cn(
+        "rounded-2xl border border-border/60 bg-muted/60 p-4",
+        muted && "opacity-60",
+      )}
+    >
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <span className="grid size-8 place-items-center rounded-full bg-primary/10 text-primary">
+          <Icon className="size-4" />
+        </span>
+        <span className="text-[11px] font-semibold uppercase tracking-wide">
+          {label}
+        </span>
+      </div>
+      <div className="mt-2 font-heading text-xl font-black text-card-foreground">
+        {value}
+      </div>
     </div>
   );
 }
