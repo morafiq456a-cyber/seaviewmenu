@@ -288,7 +288,7 @@ function MenuPage() {
 
       <MenuFooter settings={settings} social={socialQ.data ?? null} />
       <FloatingActions settings={settings} config={config} />
-      <FloatingTopBar settings={settings} onSearch={() => setSearchOpen(true)} />
+      <FloatingTopBar settings={settings} search={search} onSearch={setSearch} />
       <SearchDialog
         open={searchOpen}
         onOpenChange={setSearchOpen}

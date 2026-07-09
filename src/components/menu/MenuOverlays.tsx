@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, Languages, Moon, Sun, UtensilsCrossed } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { useTheme } from "@/lib/theme-provider";
+import { ArrowUp, UtensilsCrossed } from "lucide-react";
 import { mediaUrl } from "@/lib/media";
 import type { RestaurantSettings } from "@/lib/queries";
 
-/** Floating back-to-top + quick language / theme controls (bottom-start). */
+/** Floating back-to-top only. Language + theme live in the FloatingTopBar. */
 export function MenuFloatingControls() {
-  const { lang, toggleLang } = useI18n();
-  const { mode, toggleMode } = useTheme();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -20,21 +16,7 @@ export function MenuFloatingControls() {
   }, []);
 
   return (
-    <div className="fixed bottom-5 start-4 z-40 flex flex-col items-center gap-2.5">
-      <button
-        onClick={toggleLang}
-        aria-label="Language"
-        className="press flex size-11 items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-soft backdrop-blur"
-      >
-        <span className="text-xs font-black">{lang === "ar" ? "EN" : "ع"}</span>
-      </button>
-      <button
-        onClick={toggleMode}
-        aria-label="Theme"
-        className="press flex size-11 items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-soft backdrop-blur"
-      >
-        {mode === "dark" ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}
-      </button>
+    <div className="pointer-events-none fixed bottom-5 start-4 z-40 flex flex-col items-center gap-2.5">
       <AnimatePresence>
         {show ? (
           <motion.button
@@ -44,7 +26,7 @@ export function MenuFloatingControls() {
             whileTap={{ scale: 0.9 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Back to top"
-            className="flex size-12 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-elevated"
+            className="pointer-events-auto flex size-12 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-elevated"
           >
             <ArrowUp className="size-5" />
           </motion.button>

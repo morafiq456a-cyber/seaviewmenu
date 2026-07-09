@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Flame,
   Clock,
@@ -41,6 +41,30 @@ export function ProductModal({
   useEffect(() => {
     setActive(0);
     setZoom(false);
+  }, [product?.id]);
+
+  // Mobile hardware back button closes the modal instead of leaving the site.
+  // We push a synthetic history entry when the modal opens and pop it on close.
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
+  useEffect(() => {
+    if (!product || typeof window === "undefined") return;
+    const marker = `product-${product.id}-${Date.now()}`;
+    window.history.pushState({ productModal: marker }, "");
+    const onPop = () => onOpenChangeRef.current(false);
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      // If our synthetic entry is still on top (user closed via X / backdrop),
+      // remove it so the URL history stays clean.
+      if (
+        typeof window !== "undefined" &&
+        window.history.state &&
+        (window.history.state as { productModal?: string }).productModal === marker
+      ) {
+        window.history.back();
+      }
+    };
   }, [product?.id]);
 
   if (!product) return null;
@@ -187,7 +211,7 @@ export function ProductModal({
 
         {/* ===== SECTION 2 — Content card ===== */}
         <div className="relative -mt-5 rounded-t-3xl bg-card shadow-elevated">
-          <div className="space-y-5 p-6">
+          <div className="space-y-4 p-5">
             {/* Name */}
             <DialogTitle className="font-heading text-2xl font-extrabold leading-tight text-card-foreground">
               {name}
@@ -208,33 +232,31 @@ export function ProductModal({
               <DialogDescription className="sr-only">{name}</DialogDescription>
             )}
 
+            {/* Prep time + Calories — side by side */}
+            {(product.prep_time || product.calories) && (
+              <div className="grid grid-cols-2 gap-2.5">
+                {product.prep_time ? (
+                  <StatCard
+                    icon={Clock}
+                    label={t("prepTime")}
+                    value={`${product.prep_time} ${t("min")}`}
+                  />
+                ) : null}
+                {product.calories ? (
+                  <StatCard
+                    icon={Sparkles}
+                    label={t("calories")}
+                    value={`${product.calories} ${t("cal")}`}
+                  />
+                ) : null}
+              </div>
+            )}
+
             {/* Meta chips (spicy / vegetarian) */}
             {(product.is_spicy || product.is_vegetarian) && (
               <div className="flex flex-wrap gap-2">
                 {product.is_spicy ? <Meta icon={Flame} label={t("spicy")} /> : null}
                 {product.is_vegetarian ? <Meta icon={Leaf} label={t("vegetarian")} /> : null}
-              </div>
-            )}
-
-            {/* Prep time + Calories — two premium cards */}
-            {(product.prep_time || product.calories) && (
-              <div className="grid grid-cols-2 gap-3">
-                <StatCard
-                  icon={Clock}
-                  label={t("prepTime")}
-                  value={
-                    product.prep_time ? `${product.prep_time} ${t("min")}` : "—"
-                  }
-                  muted={!product.prep_time}
-                />
-                <StatCard
-                  icon={Sparkles}
-                  label={t("calories")}
-                  value={
-                    product.calories ? `${product.calories} ${t("cal")}` : "—"
-                  }
-                  muted={!product.calories}
-                />
               </div>
             )}
 
@@ -295,9 +317,9 @@ export function ProductModal({
               </div>
             ) : null}
 
-            {/* Actions */}
+            {/* Actions — WhatsApp then Call */}
             {(settings?.whatsapp || settings?.phone) && (
-              <div className="grid grid-cols-1 gap-2.5 pt-1 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-2.5 pt-1">
                 {settings?.whatsapp ? (
                   <Button
                     asChild
@@ -327,8 +349,6 @@ export function ProductModal({
                 ) : null}
               </div>
             )}
-
-            {/* Related products removed — modal focuses on the selected item */}
           </div>
         </div>
       </DialogContent>
@@ -359,30 +379,23 @@ function StatCard({
   icon: Icon,
   label,
   value,
-  muted,
 }: {
   icon: typeof Clock;
   label: string;
   value: string;
-  muted?: boolean;
 }) {
   return (
-    <div
-      className={cn(
-        "rounded-2xl border border-border/60 bg-muted/60 p-4",
-        muted && "opacity-60",
-      )}
-    >
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <span className="grid size-8 place-items-center rounded-full bg-primary/10 text-primary">
-          <Icon className="size-4" />
-        </span>
-        <span className="text-[11px] font-semibold uppercase tracking-wide">
+    <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-muted/50 p-3">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+        <Icon className="size-4" />
+      </span>
+      <div className="min-w-0">
+        <div className="truncate text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
-        </span>
-      </div>
-      <div className="mt-2 font-heading text-xl font-black text-card-foreground">
-        {value}
+        </div>
+        <div className="truncate font-heading text-base font-black text-card-foreground">
+          {value}
+        </div>
       </div>
     </div>
   );
