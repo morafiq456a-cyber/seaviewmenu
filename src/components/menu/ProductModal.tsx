@@ -25,8 +25,6 @@ interface Props {
   product: Product | null;
   currency: string;
   settings: RestaurantSettings | null;
-  related?: Product[];
-  onSelectProduct?: (p: Product) => void;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -34,8 +32,6 @@ export function ProductModal({
   product,
   currency,
   settings,
-  related = [],
-  onSelectProduct,
   onOpenChange,
 }: Props) {
   const { pick, t, isRTL } = useI18n();
@@ -332,44 +328,7 @@ export function ProductModal({
               </div>
             )}
 
-            {/* Related products */}
-            {related.length ? (
-              <div className="space-y-2.5 border-t border-border pt-4">
-                <h4 className="font-heading text-sm font-bold">
-                  {t("relatedProducts")}
-                </h4>
-                <div className="flex gap-3 overflow-x-auto no-scrollbar">
-                  {related.map((r) => {
-                    const rImg = mediaUrl(orderedImages(r)[0]);
-                    return (
-                      <button
-                        key={r.id}
-                        onClick={() => onSelectProduct?.(r)}
-                        className="w-28 shrink-0 text-start"
-                      >
-                        <div className="aspect-square overflow-hidden rounded-xl bg-muted">
-                          {rImg ? (
-                            <img
-                              src={rImg}
-                              alt={pick(r, "name")}
-                              className="size-full object-cover"
-                            />
-                          ) : (
-                            <div className="size-full gradient-primary" />
-                          )}
-                        </div>
-                        <div className="mt-1.5 truncate text-xs font-semibold text-foreground">
-                          {pick(r, "name")}
-                        </div>
-                        <div className="text-xs font-bold text-primary">
-                          {r.price} {r.currency}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null}
+            {/* Related products removed — modal focuses on the selected item */}
           </div>
         </div>
       </DialogContent>
