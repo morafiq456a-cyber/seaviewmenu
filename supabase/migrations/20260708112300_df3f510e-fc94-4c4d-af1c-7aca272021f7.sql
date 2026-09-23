@@ -1,7 +1,0 @@
-ALTER TABLE public.products
-  ADD COLUMN IF NOT EXISTS allergens_ar text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS allergens_en text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS notes_ar text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS notes_en text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS tags jsonb NOT NULL DEFAULT '[]'::jsonb,
-  ADD COLUMN IF NOT EXISTS cover_index integer NOT NULL DEFAULT 0;
